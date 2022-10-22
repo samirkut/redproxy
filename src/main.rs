@@ -1,28 +1,29 @@
-use std::error;
-use std::path::PathBuf;
-
+use anyhow::Result;
 use clap::Parser;
 
-type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
 
 #[derive(Parser)]
 struct Cli {
     // path to config file
-    #[arg(short, long, required = false)]
+    #[arg(short, long)]
+    #[clap(default_value="~/.config/redproxy.yaml")]
     config: String,
 }
 
-fn get_default_config() -> Result<PathBuf> {
-    let home = std::env::var("HOME")?;
-    Ok(PathBuf::from(format!("{}/.config/redproxy.yaml", home)))
+fn expand_path(p: &str) -> Result<String> {
+    if p.starts_with("~/") {
+        let home = std::env::var("HOME")?;
+        let ret = p.replacen('~', home.as_str(), 1);
+        Ok(ret)
+    }else{
+        Ok(String::from(p))
+    }
 }
 
-fn main() -> Result<()>{
-    let args = Cli::parse();
-    let mut cfg = args.config;
-    if cfg == "" {
-        cfg = get_default_config()?.into_os_string().into_string().unwrap();
-    }
+fn main() -> Result<()> {
+    let mut args = Cli::parse();
+    args.config = expand_path(&args.config)?;
+    
     println!("Config file {}", args.config);
 
     Ok(())
