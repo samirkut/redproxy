@@ -1,30 +1,62 @@
 use anyhow::Result;
-use clap::Parser;
-
+use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 struct Cli {
-    // path to config file
-    #[arg(short, long)]
-    #[clap(default_value="~/.config/redproxy.yaml")]
-    config: String,
+    #[command(subcommand)]
+    command: Commands,
 }
 
-fn expand_path(p: &str) -> Result<String> {
-    if p.starts_with("~/") {
-        let home = std::env::var("HOME")?;
-        let ret = p.replacen('~', home.as_str(), 1);
-        Ok(ret)
-    }else{
-        Ok(String::from(p))
-    }
+#[cfg(target_family = "unix")]
+fn default_script_path() -> Result<String> {
+    let home = std::env::var("HOME")?;
+    return Ok(home + "/.config/redproxy.star");
+}
+
+#[cfg(target_family = "windows")]
+fn default_script_path() -> Result<String> {
+    let userProfile = std::env::var("USERPROFILE")?;
+    return Ok(userProfile + "\\.config\\redproxy.star");
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Validate script
+    Validate {
+        /// script to validate
+        #[arg(required = false, default_value_t = String::from(""))]
+        script: String,
+    },
+    /// Run the command with the specified script
+    Run {
+        /// script to run
+        #[arg(required = false, default_value_t = String::from(""))]
+        script: String,
+    },
 }
 
 fn main() -> Result<()> {
-    let mut args = Cli::parse();
-    args.config = expand_path(&args.config)?;
-    
-    println!("Config file {}", args.config);
+    let args = Cli::parse();
+    match args.command {
+        Commands::Validate { script } => validate(script),
+        Commands::Run { script } => run(script),
+    }
+}
 
+fn validate(mut script: String) -> Result<()> {
+    if script == "" {
+        script = default_script_path()?;
+    }
+    println!("Validate script: {}", script);
+
+    Ok(())
+}
+
+fn run(mut script: String) -> Result<()> {
+    if script == "" {
+        script = default_script_path()?;
+    }
+    println!("Run script: {}", script);
+    
     Ok(())
 }

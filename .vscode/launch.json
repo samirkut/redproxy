@@ -7,7 +7,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'redproxy'",
+            "name": "redproxy validate",
             "cargo": {
                 "args": [
                     "build",
@@ -19,7 +19,29 @@
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": [
+                "validate"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "redproxy run",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=redproxy",
+                    "--package=redproxy"
+                ],
+                "filter": {
+                    "name": "redproxy",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "run"
+            ],
             "cwd": "${workspaceFolder}"
         },
         {
