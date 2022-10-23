@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 anyhow ={ version = "1.0.66"}
 clap = { version = "4.0.11", features = ["derive"] }
-starlark = { version = "0.8.0"}
+starlark = { git = "https://github.com/facebookexperimental/starlark-rust", rev = "e4dcc98"}
