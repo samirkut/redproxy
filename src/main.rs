@@ -6,6 +6,9 @@ use pretty_env_logger;
 mod args;
 use args::{Cli, Commands, default_script_path};
 
+mod evaluator;
+use evaluator::{evaluate};
+
 fn main() -> Result<()> {
     if cfg!(debug_assertions) {
         pretty_env_logger::init();
@@ -29,7 +32,7 @@ fn validate(mut script: String) -> Result<()> {
     }
     info!("Validate script: {}", script);
 
-    Ok(())
+    evaluate(script.as_str())
 }
 
 fn run(mut script: String) -> Result<()> {
