@@ -22,6 +22,9 @@
             "args": [
                 "validate"
             ],
+            "env": {
+                "RUST_LOG": "info",
+            },
             "cwd": "${workspaceFolder}"
         },
         {

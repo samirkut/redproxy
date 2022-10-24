@@ -1,5 +1,7 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand};
+use pretty_env_logger;
+use log::{info};
 
 #[derive(Parser)]
 struct Cli {
@@ -36,6 +38,9 @@ enum Commands {
 }
 
 fn main() -> Result<()> {
+    pretty_env_logger::init();
+    info!("starting redproxy");
+
     let args = Cli::parse();
     match args.command {
         Commands::Validate { script } => validate(script),
@@ -47,7 +52,7 @@ fn validate(mut script: String) -> Result<()> {
     if script == "" {
         script = default_script_path()?;
     }
-    println!("Validate script: {}", script);
+    info!("Validate script: {}", script);
 
     Ok(())
 }
@@ -56,7 +61,7 @@ fn run(mut script: String) -> Result<()> {
     if script == "" {
         script = default_script_path()?;
     }
-    println!("Run script: {}", script);
+    info!("Run script: {}", script);
     
     Ok(())
 }
