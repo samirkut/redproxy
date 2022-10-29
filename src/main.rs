@@ -2,6 +2,7 @@ use anyhow::Result;
 use clap::{Parser};
 use log::info;
 use pretty_env_logger;
+use std::path::Path;
 
 mod args;
 use args::{Cli, Commands, default_script_path};
@@ -32,7 +33,14 @@ fn validate(mut script: String) -> Result<()> {
     }
     info!("Validate script: {}", script);
 
-    evaluate(script.as_str())
+    let p = Path::new(&script);
+    let m = evaluate(p, "OnInitialize")?;
+
+    for (k,v) in m {
+        println!("{}: {}", k, v);
+    }
+
+    Ok(())
 }
 
 fn run(mut script: String) -> Result<()> {

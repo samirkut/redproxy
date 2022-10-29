@@ -20,7 +20,8 @@
                 }
             },
             "args": [
-                "validate"
+                "validate",
+                "test/simple_proxy.star"
             ],
             "env": {
                 "RUST_LOG": "info",
